@@ -1,11 +1,11 @@
-from aoc import read_data_as_lines, run
+from aoc import read_data_as_lines, run, TestCase
 
 WHEEL_SIZE = 100
 START_POSITION = 50
 
 
 def parse(data):
-    lines = read_data_as_lines("01", data)
+    lines = read_data_as_lines(data)
     return [(line[0], int(line[1:])) for line in lines]
 
 
@@ -61,7 +61,13 @@ def number_of_clicks_on_zero(data):
 
 if __name__ == "__main__":
     # Part 1
-    run(rotations_ending_on_zero, [("example_01", 3), ("puzzle_input", 1007)])
+    run(
+        rotations_ending_on_zero,
+        [TestCase("01_example_01", 3), TestCase("01_puzzle_input", 1007)],
+    )
 
     # Part 2
-    run(number_of_clicks_on_zero, [("example_01", 6), ("puzzle_input", 5820)])
+    run(
+        number_of_clicks_on_zero,
+        [TestCase("01_example_01", 6), TestCase("01_puzzle_input", 5820)],
+    )
