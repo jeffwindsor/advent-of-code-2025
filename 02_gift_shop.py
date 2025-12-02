@@ -1,31 +1,7 @@
-# Problem Analysis:
-#   This is a pattern matching and digit manipulation problem. Key CS concepts involved:
-#       - String pattern recognition: Detecting if a number follows a specific structure
-#       - Modular arithmetic: Working with digit representations
-#       - Range iteration: Efficiently checking numbers within bounds
-#       - Filtering: Identifying elements that match criteria
-#   Key Insights:
-#       - Invalid if starts with 0
-#       - Invalid ids must have even length
-#       - For even length string, paladromes match if string halves match
-#       -
-
 from aoc import read_data, run, TestCase
 
 
 def parse(data_file):
-    """
-    Parse input file containing comma-separated ranges.
-
-    Args:
-        data_file: Name of the data file in ./data/ directory
-
-    Returns:
-        List of (start, end) tuples representing ranges
-
-    Example:
-        "11-22,95-115" -> [(11, 22), (95, 115)]
-    """
     data = read_data(data_file)
     ranges = []
     for range_str in data.split(","):
@@ -34,18 +10,14 @@ def parse(data_file):
     return ranges
 
 
-def is_invalid_id(n):
+def is_invalid_id1(n):
     """
-    Check if a number is an 'invalid ID'.
+    Part 1: Check if pattern is repeated EXACTLY twice.
 
-    An invalid ID is a number whose digits form a pattern repeated exactly twice.
-    Examples: 55 (5 twice), 6464 (64 twice), 123123 (123 twice)
-
-    Args:
-        n: Number to check
-
-    Returns:
-        True if the number is an invalid ID, False otherwise
+    Examples:
+        55 (5 twice) -> True
+        6464 (64 twice) -> True
+        111 (1 three times) -> False
     """
     s = str(n)
 
@@ -55,28 +27,50 @@ def is_invalid_id(n):
 
     # Split in half and compare
     mid = len(s) // 2
-    first_half = s[:mid]
-    second_half = s[mid:]
-
-    return first_half == second_half
+    return s[:mid] == s[mid:]
 
 
-def sum_of_invalid_ids(data_file):
+def is_invalid_id2(n):
     """
-    Find and sum all invalid IDs in the given ranges.
+    Part 2: Check if pattern is repeated AT LEAST twice.
 
-    Args:
-        data_file: Name of the data file containing ranges
-
-    Returns:
-        Sum of all invalid IDs found across all ranges
+    Examples:
+        55 (5 twice) -> True
+        111 (1 three times) -> True
+        12341234 (1234 twice) -> True
     """
+    value = str(n)
+    length = len(value)
+
+    # Try all pattern lengths that allow at least 2 repetitions
+    for pattern_len in range(1, length // 2 + 1):
+        if length % pattern_len == 0:  # Pattern length must divide evenly
+            pattern = value[:pattern_len]
+            if pattern * (length // pattern_len) == value:
+                return True
+
+    return False
+
+
+def sum_of_invalid_ids1(data_file):
     ranges = parse(data_file)
     total = 0
 
     for start, end in ranges:
         for num in range(start, end + 1):
-            if is_invalid_id(num):
+            if is_invalid_id1(num):
+                total += num
+
+    return total
+
+
+def sum_of_invalid_ids2(data_file):
+    ranges = parse(data_file)
+    total = 0
+
+    for start, end in ranges:
+        for num in range(start, end + 1):
+            if is_invalid_id2(num):
                 total += num
 
     return total
@@ -85,9 +79,18 @@ def sum_of_invalid_ids(data_file):
 if __name__ == "__main__":
     # Part 1
     run(
-        sum_of_invalid_ids,
+        sum_of_invalid_ids1,
         [
             TestCase("02_example_01", 1227775554),
             TestCase("02_puzzle_input", 20223751480),
+        ],
+    )
+
+    # Part 2
+    run(
+        sum_of_invalid_ids2,
+        [
+            TestCase("02_example_01", 4174379265),
+            TestCase("02_puzzle_input", 30260171216),
         ],
     )
