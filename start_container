@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-docker run -it --rm \
-  -v $HOME/Source/github.com/jeffwindsor:/app \
-  -w /app \
-  python:latest bash
