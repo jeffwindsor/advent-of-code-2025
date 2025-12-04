@@ -79,9 +79,9 @@ def dfs(
         Uses parent tracking and backtracking for efficient O(n) path construction,
         avoiding the O(n²) cost of incrementally building paths during search.
     """
-    stack = [(start, None)]  # (current, parent)
-    parent_map = {}
-    visited = set()
+    stack: list[tuple[Coord, Coord | None]] = [(start, None)]  # (current, parent)
+    parent_map: dict[Coord, Coord | None] = {}
+    visited: set[Coord] = set()
 
     while stack:
         current, parent = stack.pop()

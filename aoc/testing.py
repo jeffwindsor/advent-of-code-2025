@@ -1,7 +1,6 @@
 """Testing utilities for Advent of Code puzzles."""
 
 import os
-import inspect
 import time
 import tracemalloc
 from dataclasses import dataclass
@@ -108,7 +107,6 @@ def run(func: Callable[[str], Any], test_cases: list[TestCase], part: str) -> No
         part: Part identifier (required: "part1" or "part2")
     """
 
-    filename = os.path.basename(inspect.stack()[1].filename)
     print(f"{TITLE_COLOR}{func.__name__}{END_COLOR}")
 
     passed = 0
@@ -121,6 +119,7 @@ def run(func: Callable[[str], Any], test_cases: list[TestCase], part: str) -> No
             expected = _load_answer_file(test_case.data_file, part)
         try:
             # Start performance tracking (if enabled)
+            start_time = 0.0  # Initialize for type checker
             if PERF_ENABLED:
                 tracemalloc.start()
                 start_time = time.perf_counter()
@@ -131,7 +130,7 @@ def run(func: Callable[[str], Any], test_cases: list[TestCase], part: str) -> No
             # Capture and format metrics (if enabled)
             if PERF_ENABLED:
                 elapsed_time = time.perf_counter() - start_time
-                current_mem, peak_mem = tracemalloc.get_traced_memory()
+                _, peak_mem = tracemalloc.get_traced_memory()
                 tracemalloc.stop()
 
                 time_str = format_time(elapsed_time)

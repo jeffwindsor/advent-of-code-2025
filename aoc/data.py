@@ -1,7 +1,5 @@
 """Data reading and parsing utilities."""
 
-from typing import Any
-
 
 def read_data(data_file: str) -> str:
     """Read puzzle input file and return contents as string."""
@@ -70,7 +68,9 @@ def read_data_as_int_grid(data_file: str, empty_value: int = -1) -> list[list[in
     ]
 
 
-def read_data_as_coord_pairs(data_file: str, separator: str = ",") -> list[tuple[int, int]]:
+def read_data_as_coord_pairs(
+    data_file: str, separator: str = ","
+) -> list[tuple[int, int]]:
     """
     Read file and parse lines of coordinate pairs into list of tuples.
 
@@ -84,16 +84,15 @@ def read_data_as_coord_pairs(data_file: str, separator: str = ",") -> list[tuple
     Example:
         Input file with lines like "3,4" returns [(3, 4), ...]
     """
-    return [
-        tuple(map(int, line.split(separator)))
-        for line in read_data_as_lines(data_file)
-    ]
+    result = []
+    for line in read_data_as_lines(data_file):
+        x, y = line.split(separator)
+        result.append((int(x), int(y)))
+    return result
 
 
 def read_data_as_graph_edges(
-    data_file: str,
-    separator: str = "-",
-    directed: bool = False
+    data_file: str, separator: str = "-", directed: bool = False
 ) -> dict[str, set[str]]:
     """
     Read file with edge list and return adjacency graph representation.
@@ -165,13 +164,12 @@ def extract_ints(text: str) -> list[int]:
         [3, 4, -2, 5]
     """
     from re import findall
+
     return list(map(int, findall(r"-?\d+", text)))
 
 
 def read_data_as_columns(
-    data_file: str,
-    separator: str | None = None,
-    converter: type = int
+    data_file: str, separator: str | None = None, converter: type = int
 ) -> list[list]:
     """
     Read file with whitespace/delimiter-separated columns and transpose.
@@ -193,7 +191,8 @@ def read_data_as_columns(
     """
     lines = read_data_as_lines(data_file)
     rows = [list(map(converter, line.split(separator))) for line in lines]
-    return list(zip(*rows))  # Transpose
+    # Transpose: zip(*rows) produces tuples, convert each to list
+    return [list(col) for col in zip(*rows)]
 
 
 __all__ = [
