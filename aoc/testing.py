@@ -63,12 +63,49 @@ def format_memory(bytes_used: int) -> str:
 @dataclass
 class TestCase:
     data_file: str
-    expected: Any
+    expected: Any = None
 
 
-def run(func: Callable[[str], Any], test_cases: list[TestCase]) -> None:
+def _load_answer_file(data_file: str, part: str) -> Any | None:
+    """
+    Load expected answer from .{part}.answer file if it exists.
+
+    Args:
+        data_file: Name of the data file (e.g., "04_example_01")
+        part: Part identifier (e.g., "part1", "part2")
+
+    Returns:
+        Parsed answer value or None if file doesn't exist
+    """
+    answer_path = f"data/{data_file}.{part}.answer"
+
+    if os.path.exists(answer_path):
+        try:
+            with open(answer_path, "r") as f:
+                content = f.read().strip()
+                # Try to parse as int first, then float, then keep as string
+                try:
+                    return int(content)
+                except ValueError:
+                    try:
+                        return float(content)
+                    except ValueError:
+                        return content
+        except Exception:
+            pass
+    return None
+
+
+def run(func: Callable[[str], Any], test_cases: list[TestCase], part: str) -> None:
     """
     Execute test cases for a given function and report results with performance metrics.
+
+    If TestCase.expected is None, attempts to load from data/{data_file}.{part}.answer
+
+    Args:
+        func: Function to test
+        test_cases: List of test cases
+        part: Part identifier (required: "part1" or "part2")
     """
 
     filename = os.path.basename(inspect.stack()[1].filename)
@@ -78,6 +115,10 @@ def run(func: Callable[[str], Any], test_cases: list[TestCase]) -> None:
     failed = 0
 
     for test_case in test_cases:
+        # Load expected value from answer file if not provided
+        expected = test_case.expected
+        if expected is None:
+            expected = _load_answer_file(test_case.data_file, part)
         try:
             # Start performance tracking (if enabled)
             if PERF_ENABLED:
@@ -100,14 +141,20 @@ def run(func: Callable[[str], Any], test_cases: list[TestCase]) -> None:
                 metrics = ""
 
             # Report results
-            if test_case.expected == actual:
+            if expected == actual:
+                print(
+                    f"  {test_case.data_file}: {TRUE_COLOR}{actual}{metrics}{END_COLOR}"
+                )
+                passed += 1
+            elif expected is None:
+                # No expected value - just show actual
                 print(
                     f"  {test_case.data_file}: {TRUE_COLOR}{actual}{metrics}{END_COLOR}"
                 )
                 passed += 1
             else:
                 print(
-                    f"  {test_case.data_file}: {FALSE_COLOR}Expected {test_case.expected} but actual is {actual}{metrics}{END_COLOR}"
+                    f"  {test_case.data_file}: {FALSE_COLOR}Expected {expected} but actual is {actual}{metrics}{END_COLOR}"
                 )
                 failed += 1
         except Exception as e:

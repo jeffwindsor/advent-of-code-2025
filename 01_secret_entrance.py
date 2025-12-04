@@ -75,14 +75,10 @@ def number_of_clicks_on_zero(data_file):
 
 
 if __name__ == "__main__":
-    # Part 1
-    run(
-        rotations_ending_on_zero,
-        [TestCase("01_example_01", 3), TestCase("01_puzzle_input", 1007)],
-    )
+    TESTS = [
+        TestCase("01_example_01"),
+        TestCase("01_puzzle_input"),
+    ]
 
-    # Part 2
-    run(
-        number_of_clicks_on_zero,
-        [TestCase("01_example_01", 6), TestCase("01_puzzle_input", 5820)],
-    )
+    run(rotations_ending_on_zero, TESTS, part="part1")
+    run(number_of_clicks_on_zero, TESTS, part="part2")

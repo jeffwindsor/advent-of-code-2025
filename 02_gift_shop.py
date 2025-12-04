@@ -80,20 +80,10 @@ def sum_of_invalid_ids_part2(data_file):
 
 
 if __name__ == "__main__":
-    # Part 1
-    run(
-        sum_of_invalid_ids_part1,
-        [
-            TestCase("02_example_01", 1227775554),
-            TestCase("02_puzzle_input", 20223751480),
-        ],
-    )
+    TESTS = [
+        TestCase("02_example_01"),
+        TestCase("02_puzzle_input"),
+    ]
 
-    # Part 2
-    run(
-        sum_of_invalid_ids_part2,
-        [
-            TestCase("02_example_01", 4174379265),
-            TestCase("02_puzzle_input", 30260171216),
-        ],
-    )
+    run(sum_of_invalid_ids_part1, TESTS, part="part1")
+    run(sum_of_invalid_ids_part2, TESTS, part="part2")

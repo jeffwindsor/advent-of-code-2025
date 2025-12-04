@@ -33,7 +33,9 @@ def count_accessible_rolls(data_file):
 
 
 if __name__ == "__main__":
-    run(count_accessible_rolls, [
-        TestCase("04_example_01", 13),
-        TestCase("04_puzzle_input", 1395),
-    ])
+    TESTS = [
+        TestCase("04_example_01"),
+        TestCase("04_puzzle_input"),
+    ]
+
+    run(count_accessible_rolls, TESTS, part="part1")

@@ -48,20 +48,10 @@ def calculate_total_joltage(data_file, max_batteries):
 
 
 if __name__ == "__main__":
-    # Part 1: Keep 2 batteries per bank
-    run(
-        lambda data_file: calculate_total_joltage(data_file, max_batteries=2),
-        [
-            TestCase("03_example_01", 357),
-            TestCase("03_puzzle_input", 17229),
-        ],
-    )
+    TESTS = [
+        TestCase("03_example_01"),
+        TestCase("03_puzzle_input"),
+    ]
 
-    # Part 2: Keep 12 batteries per bank
-    run(
-        lambda data_file: calculate_total_joltage(data_file, max_batteries=12),
-        [
-            TestCase("03_example_01", 3121910778619),
-            TestCase("03_puzzle_input", 170520923035051),
-        ],
-    )
+    run(lambda data_file: calculate_total_joltage(data_file, max_batteries=2), TESTS, part="part1")
+    run(lambda data_file: calculate_total_joltage(data_file, max_batteries=12), TESTS, part="part2")
