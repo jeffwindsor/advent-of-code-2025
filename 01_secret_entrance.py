@@ -4,12 +4,18 @@ WHEEL_SIZE = 100
 START_POSITION = 50
 
 
-def parse(data):
-    lines = read_data_as_lines(data)
-    return [(line[0], int(line[1:])) for line in lines]
+def parse(data_file):
+    lines = read_data_as_lines(data_file)
+    rotations = []
+    for line in lines:
+        direction = line[0]
+        distance = int(line[1:])
+        rotations.append((direction, distance))
+    return rotations
 
 
-def count_zero_crossings(position, distance):
+def count_zero_crossings_left(position, distance):
+    """Count how many times we pass zero when rotating left."""
     if position == 0:
         return distance // WHEEL_SIZE
     elif distance >= position:
@@ -18,45 +24,54 @@ def count_zero_crossings(position, distance):
         return 0
 
 
+def count_zero_crossings_right(position, distance):
+    """Count how many times we pass zero when rotating right."""
+    return (position + distance) // WHEEL_SIZE
+
+
 def rotate_left(position, distance):
+    """Rotate left and return new position."""
     return (position - distance) % WHEEL_SIZE
 
 
 def rotate_right(position, distance):
+    """Rotate right and return new position."""
     return (position + distance) % WHEEL_SIZE
 
 
-def rotations_ending_on_zero(data):
-    rotations = parse(data)
+def rotations_ending_on_zero(data_file):
+    """Count how many rotations end with the wheel at position zero."""
+    rotations = parse(data_file)
     position = START_POSITION
     count = 0
 
     for direction, distance in rotations:
-        position = (
-            rotate_left(position, distance)
-            if direction == "L"
-            else rotate_right(position, distance)
-        )
+        if direction == "L":
+            position = rotate_left(position, distance)
+        else:  # "R"
+            position = rotate_right(position, distance)
+
         if position == 0:
             count += 1
 
     return count
 
 
-def number_of_clicks_on_zero(data):
-    rotations = parse(data)
+def number_of_clicks_on_zero(data_file):
+    """Count total times the wheel clicks past position zero."""
+    rotations = parse(data_file)
     position = START_POSITION
-    count = 0
+    total_clicks = 0
 
     for direction, distance in rotations:
         if direction == "L":
-            count += count_zero_crossings(position, distance)
+            total_clicks += count_zero_crossings_left(position, distance)
             position = rotate_left(position, distance)
         else:  # "R"
-            count += (position + distance) // WHEEL_SIZE
+            total_clicks += count_zero_crossings_right(position, distance)
             position = rotate_right(position, distance)
 
-    return count
+    return total_clicks
 
 
 if __name__ == "__main__":

@@ -5,42 +5,61 @@ def parse(data_file):
     return read_data_as_lines(data_file)
 
 
-def maximum_joltage(battery_bank: str, allowed_active_batteries: int) -> str:
+def select_strongest_batteries(battery_bank: str, max_batteries: int) -> str:
+    """
+    Select the strongest batteries using a greedy algorithm.
+
+    Strategy: Keep the strongest batteries by removing weaker ones when
+    a stronger battery is encountered.
+
+    Args:
+        battery_bank: String of battery strengths (digits)
+        max_batteries: Maximum number of batteries to keep active
+
+    Returns:
+        String representing the strongest battery configuration
+    """
     total_batteries = len(battery_bank)
-    batteries_to_skip = total_batteries - allowed_active_batteries
-    battery_chain = []  # Stack of batteries we're turning on
+    removals_allowed = total_batteries - max_batteries
+    active_batteries = []
 
-    # while we have batteries_to_skip, turn off weaker batteries
-    for battery in battery_bank:
-        while battery_chain and batteries_to_skip > 0 and battery_chain[-1] < battery:
-            battery_chain.pop()  # Turn off the weaker battery
-            batteries_to_skip -= 1
-        battery_chain.append(battery)  # Activate this battery
+    for battery_strength in battery_bank:
+        # Remove weaker batteries if we find a stronger one
+        while (active_batteries and
+               removals_allowed > 0 and
+               active_batteries[-1] < battery_strength):
+            active_batteries.pop()
+            removals_allowed -= 1
 
-    max_battery_chain = battery_chain[:allowed_active_batteries]
-    return "".join(max_battery_chain)
+        active_batteries.append(battery_strength)
+
+    # Keep only the allowed number of batteries
+    selected_batteries = active_batteries[:max_batteries]
+    return "".join(selected_batteries)
 
 
-def calculate_max_total_joltage(data_file, allowed_active_batteries):
+def calculate_total_joltage(data_file, max_batteries):
+    """Calculate total joltage across all battery banks."""
     battery_banks = parse(data_file)
     return sum(
-        int(maximum_joltage(bank, allowed_active_batteries)) for bank in battery_banks
+        int(select_strongest_batteries(bank, max_batteries))
+        for bank in battery_banks
     )
 
 
 if __name__ == "__main__":
-    # Part 1
+    # Part 1: Keep 2 batteries per bank
     run(
-        lambda data_file: calculate_max_total_joltage(data_file, 2),
+        lambda data_file: calculate_total_joltage(data_file, max_batteries=2),
         [
             TestCase("03_example_01", 357),
             TestCase("03_puzzle_input", 17229),
         ],
     )
 
-    # Part 2
+    # Part 2: Keep 12 batteries per bank
     run(
-        lambda data_file: calculate_max_total_joltage(data_file, 12),
+        lambda data_file: calculate_total_joltage(data_file, max_batteries=12),
         [
             TestCase("03_example_01", 3121910778619),
             TestCase("03_puzzle_input", 170520923035051),
