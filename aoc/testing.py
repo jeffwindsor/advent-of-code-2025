@@ -9,12 +9,19 @@ from typing import Callable, Any
 
 
 # ========== Configuration ==========
-
-
 def _is_perf_enabled() -> bool:
-    """Check if performance metrics should be collected via AOC_PERF env var."""
-    value = os.getenv('AOC_PERF', '').lower()
-    return value in ('1', 'true', 'yes')
+    config_file = ".aoc_config"
+    if os.path.exists(config_file):
+        try:
+            with open(config_file, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if line.startswith("test_performance_tracking="):
+                        value = line.split("=", 1)[1].strip().lower()
+                        return value in ("true", "1", "yes")
+        except Exception:
+            pass
+    return False
 
 
 # Cache at module load time for zero per-test overhead
@@ -33,7 +40,6 @@ END_COLOR = "\033[0m"
 
 
 def format_time(seconds: float) -> str:
-    """Format time duration for display."""
     if seconds < 0.001:
         return f"{seconds * 1_000_000:.0f}µs"
     elif seconds < 1.0:
@@ -43,7 +49,6 @@ def format_time(seconds: float) -> str:
 
 
 def format_memory(bytes_used: int) -> str:
-    """Format memory usage for display."""
     if bytes_used < 1024:
         return f"{bytes_used}B"
     elif bytes_used < 1024 * 1024:
@@ -57,8 +62,6 @@ def format_memory(bytes_used: int) -> str:
 
 @dataclass
 class TestCase:
-    """A single test case with data file and expected output."""
-
     data_file: str
     expected: Any
 
@@ -66,16 +69,8 @@ class TestCase:
 def run(func: Callable[[str], Any], test_cases: list[TestCase]) -> None:
     """
     Execute test cases for a given function and report results with performance metrics.
-
-    Args:
-        func: Function to test (takes string data_file, returns any value)
-        test_cases: List of TestCase objects
-
-    The function prints colored output:
-    - Green for passing tests showing the actual result with time and memory
-    - Red for failing tests showing expected vs actual
-    - Summary line showing total pass/fail count
     """
+
     filename = os.path.basename(inspect.stack()[1].filename)
     print(f"{TITLE_COLOR}{func.__name__}{END_COLOR}")
 
@@ -106,7 +101,9 @@ def run(func: Callable[[str], Any], test_cases: list[TestCase]) -> None:
 
             # Report results
             if test_case.expected == actual:
-                print(f"  {test_case.data_file}: {TRUE_COLOR}{actual}{metrics}{END_COLOR}")
+                print(
+                    f"  {test_case.data_file}: {TRUE_COLOR}{actual}{metrics}{END_COLOR}"
+                )
                 passed += 1
             else:
                 print(
