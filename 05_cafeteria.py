@@ -1,0 +1,56 @@
+from aoc import parse_delimited, read_data_as_sections, run, TestCase
+
+
+def parse(data_file):
+    sections = read_data_as_sections(data_file, as_lines=True)
+    ranges = [tuple(parse_delimited(line, "-", int)) for line in sections[0]]
+    ids = [int(line) for line in sections[1]]
+    return ranges, ids
+
+
+def is_fresh(ingredient_id, ranges):
+    return any(start <= ingredient_id <= end for start, end in ranges)
+
+
+def ranges_touch_or_overlap(start, last_end):
+    return start - last_end <= 1
+
+
+def merge_ranges(ranges):
+    if not ranges:
+        return []
+
+    sorted_ranges = sorted(ranges, key=lambda r: r[0])
+    merged = [sorted_ranges[0]]
+
+    for start, end in sorted_ranges[1:]:
+        last_start, last_end = merged[-1]
+
+        if ranges_touch_or_overlap(start, last_end):
+            merged[-1] = (last_start, max(last_end, end))
+        else:
+            merged.append((start, end))
+
+    return merged
+
+
+def count_fresh_ingredients(data_file):
+    ranges, ids = parse(data_file)
+    return sum(1 for ingredient_id in ids if is_fresh(ingredient_id, ranges))
+
+
+def count_total_fresh_ids(data_file):
+    sections = read_data_as_sections(data_file, as_lines=True)
+    ranges = [tuple(parse_delimited(line, "-", int)) for line in sections[0]]
+    merged = merge_ranges(ranges)
+    return sum(end - start + 1 for start, end in merged)
+
+
+if __name__ == "__main__":
+    TESTS = [
+        TestCase("05_example_01"),
+        TestCase("05_puzzle_input"),
+    ]
+
+    run(count_fresh_ingredients, TESTS, part="part1")
+    run(count_total_fresh_ids, TESTS, part="part2")
