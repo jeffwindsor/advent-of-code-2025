@@ -1,9 +1,9 @@
-from aoc import read_data, extract_ints, run, TestCase
+from aoc import Input, run, TestCase
 
 
 def parse(data_file):
-    ranges = read_data(data_file).split(",")
-    return [tuple(extract_ints(r)) for r in ranges]
+    ranges = Input(data_file).content.split(",")
+    return [tuple(int(x) for x in r.split("-")) for r in ranges]
 
 
 def has_pattern_repeated_exactly_twice(number):
@@ -51,10 +51,17 @@ def sum_of_invalid_ids2(data_file):
 
 
 if __name__ == "__main__":
-    TESTS = [
-        TestCase("02_example_01"),
-        TestCase("02_puzzle_input"),
-    ]
-
-    run(sum_of_invalid_ids1, TESTS, part="part1")
-    run(sum_of_invalid_ids2, TESTS, part="part2")
+    run(
+        sum_of_invalid_ids1,
+        [
+            TestCase("data/02_example_01", 1227775554),
+            TestCase("data/02_puzzle_input", 20223751480),
+        ],
+    )
+    run(
+        sum_of_invalid_ids2,
+        [
+            TestCase("data/02_example_01", 4174379265),
+            TestCase("data/02_puzzle_input", 30260171216),
+        ],
+    )

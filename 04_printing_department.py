@@ -1,31 +1,21 @@
-from aoc import (
-    Coord,
-    grid_coords,
-    grid_get,
-    grid_max_bounds,
-    grid_set,
-    read_data_as_char_grid,
-    run,
-    TestCase,
-)
+from aoc import Coord, Grid, Input, run, TestCase
 
 
 def parse(data_file):
-    return read_data_as_char_grid(data_file)
+    return Input(data_file).as_grid()
 
 
 def count_adjacent_rolls(grid, position):
-    max_bounds = grid_max_bounds(grid)
-    neighbors = position.neighbors(max_bounds, directions=Coord.DIRECTIONS_ALL)
-    return sum(1 for neighbor in neighbors if grid_get(grid, neighbor) == "@")
+    neighbors = position.neighbors(grid.max_bounds, directions=Coord.DIRECTIONS_ALL)
+    return sum(1 for neighbor in neighbors if grid[neighbor] == "@")
 
 
 def is_removable(grid, position):
-    return grid_get(grid, position) == "@" and count_adjacent_rolls(grid, position) < 4
+    return grid[position] == "@" and count_adjacent_rolls(grid, position) < 4
 
 
 def find_removable_rolls(grid):
-    return {pos for pos, _ in grid_coords(grid) if is_removable(grid, pos)}
+    return {pos for pos, _ in grid.coords() if is_removable(grid, pos)}
 
 
 def count_accessible_rolls(data_file):
@@ -39,17 +29,24 @@ def count_total_removable_rolls(data_file):
 
     while removable := find_removable_rolls(grid):
         for pos in removable:
-            grid_set(grid, pos, ".")
+            grid[pos] = "."
         total_removed += len(removable)
 
     return total_removed
 
 
 if __name__ == "__main__":
-    TESTS = [
-        TestCase("04_example_01"),
-        TestCase("04_puzzle_input"),
-    ]
-
-    run(count_accessible_rolls, TESTS, part="part1")
-    run(count_total_removable_rolls, TESTS, part="part2")
+    run(
+        count_accessible_rolls,
+        [
+            TestCase("data/04_example_01", 13),
+            TestCase("data/04_puzzle_input", 1395),
+        ],
+    )
+    run(
+        count_total_removable_rolls,
+        [
+            TestCase("data/04_example_01", 43),
+            TestCase("data/04_puzzle_input", 8451),
+        ],
+    )
