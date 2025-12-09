@@ -15,7 +15,9 @@ Supported Parsing Scenarios
 **Column-based parsing** - ``as_columns()``
     Parse whitespace-separated values into columns (transpose rows to columns).
 
-    Example: ``"3   4\\n8   10"`` → ``[(3, 8), (4, 10)]``
+    Example: ``"3   4\\n8   10"`` → ``[('3', '8'), ('4', '10')]``
+
+    With converter: ``as_columns(converter=int)`` → ``[(3, 8), (4, 10)]``
 
 **Line-by-line data** - ``as_lines()``
     Split content into list of strings, one per line.
@@ -169,7 +171,7 @@ def extract_pattern(text: str, pattern: str) -> list[str]:
         raise ValueError(f"Invalid regex pattern: {e}")
 
 
-def parse(content: str, sep: str | None, skip_empty: bool = True) -> list[str]:
+def parse(content: str, sep: str | None, skip_empty: bool = True, strip: bool = True) -> list[str]:
     """
     Split content by separator.
 
@@ -177,6 +179,7 @@ def parse(content: str, sep: str | None, skip_empty: bool = True) -> list[str]:
         content: String content to split
         sep: Separator to split on (if empty/None, returns char array)
         skip_empty: Skip empty parts after stripping whitespace (default: True)
+        strip: Strip whitespace from parts (default: True)
 
     Returns:
         List of strings (or list of characters if sep is empty/None)
@@ -186,7 +189,10 @@ def parse(content: str, sep: str | None, skip_empty: bool = True) -> list[str]:
 
     parts = content.split(sep)
     if skip_empty:
-        return [stripped for part in parts if (stripped := part.strip())]
+        if strip:
+            return [stripped for part in parts if (stripped := part.strip())]
+        else:
+            return [part for part in parts if part]
     return parts
 
 
@@ -208,7 +214,7 @@ class Input:
     LINE_SEPARATOR = "\n"
     SECTION_SEPARATOR = "\n\n"
 
-    def __init__(self, content: str, line_sep: str = None, section_sep: str = None):
+    def __init__(self, content: str, line_sep: str = None, section_sep: str = None, strip_content: bool = True):
         """
         Initialize Input with content and separators.
 
@@ -216,6 +222,7 @@ class Input:
             content: Text content to parse
             line_sep: Separator between lines (default: newline)
             section_sep: Separator between sections (default: blank line)
+            strip_content: Strip whitespace from content (default: True)
         """
         # Skip initialization if already initialized by __new__/from_file/from_string
         if hasattr(self, "_content"):
@@ -223,6 +230,7 @@ class Input:
         self._content = content
         self._line_sep = line_sep or self.LINE_SEPARATOR
         self._section_sep = section_sep or self.SECTION_SEPARATOR
+        self._strip_content = strip_content
 
     def __new__(cls, filepath: str):
         """
@@ -243,6 +251,7 @@ class Input:
         filepath: str,
         line_sep: str = None,
         section_sep: str = None,
+        strip_content: bool = True,
     ) -> "Input":
         """
         Create Input from file (reads immediately).
@@ -251,6 +260,7 @@ class Input:
             filepath: Path to input file
             line_sep: Separator between lines (default: newline)
             section_sep: Separator between sections (default: blank line)
+            strip_content: Strip whitespace from content (default: True)
 
         Returns:
             Input instance with file contents
@@ -261,14 +271,17 @@ class Input:
             ['123', '456', '789']
         """
         with open(filepath) as f:
-            content = f.read().strip()
-        return Input.from_string(content, line_sep, section_sep)
+            content = f.read()
+            if strip_content:
+                content = content.strip()
+        return Input.from_string(content, line_sep, section_sep, strip_content)
 
     @staticmethod
     def from_string(
         content: str,
         line_sep: str = None,
         section_sep: str = None,
+        strip_content: bool = True,
     ) -> "Input":
         """
         Create Input from string content.
@@ -277,6 +290,7 @@ class Input:
             content: String content to parse
             line_sep: Separator between lines (default: newline)
             section_sep: Separator between sections (default: blank line)
+            strip_content: Strip whitespace from content (default: True)
 
         Returns:
             Input instance
@@ -291,6 +305,7 @@ class Input:
         instance._content = content
         instance._line_sep = line_sep or Input.LINE_SEPARATOR
         instance._section_sep = section_sep or Input.SECTION_SEPARATOR
+        instance._strip_content = strip_content
         return instance
 
     @property
@@ -314,7 +329,7 @@ class Input:
         Returns:
             List of strings (or list of characters if sep is empty/None)
         """
-        return parse(self._content, sep, skip_empty)
+        return parse(self._content, sep, skip_empty, strip=self._strip_content)
 
     def as_lines(self, skip_empty: bool = True) -> list[str]:
         """
@@ -423,24 +438,30 @@ class Input:
         )
 
     def as_columns(
-        self, separator: str | None = None, converter: type = int
+        self, separator: str | None = None, converter: type = None
     ) -> list[tuple]:
         """
         Parse content as columns (transpose rows to columns).
 
         Args:
             separator: Delimiter between values (default: whitespace)
-            converter: Type function to apply to each value (default: int)
+            converter: Type function to apply to each value (default: None, no conversion)
 
         Returns:
             List of tuples, one per column
 
-        Example:
+        Examples:
             >>> Input.from_string("1 2 3\\n4 5 6").as_columns()
+            [('1', '4'), ('2', '5'), ('3', '6')]
+
+            >>> Input.from_string("1 2 3\\n4 5 6").as_columns(converter=int)
             [(1, 4), (2, 5), (3, 6)]
         """
         lines = self.as_lines()
-        rows = [list(map(converter, line.split(separator))) for line in lines]
+        if converter is None:
+            rows = [line.split(separator) for line in lines]
+        else:
+            rows = [list(map(converter, line.split(separator))) for line in lines]
         return list(zip(*rows))
 
     def as_coords(self, separator: str = ",") -> list[Coord]:
@@ -603,7 +624,7 @@ class Input:
         parts = self.parse(self._section_sep, skip_empty=False)
         return [
             Input.from_string(
-                s.strip() if strip else s, self._line_sep, self._section_sep
+                s.strip() if strip else s, self._line_sep, self._section_sep, self._strip_content
             )
             for s in parts
         ]
