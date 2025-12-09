@@ -1,17 +1,12 @@
-from aoc import read_data_as_lines, run, TestCase
+from aoc import Input, run, TestCase
 
 WHEEL_SIZE = 100
 START_POSITION = 50
 
 
 def parse(data_file):
-    lines = read_data_as_lines(data_file)
-    rotations = []
-    for line in lines:
-        direction = line[0]
-        distance = int(line[1:])
-        rotations.append((direction, distance))
-    return rotations
+    lines = Input(data_file).as_lines()
+    return [(line[0], int(line[1:])) for line in lines]
 
 
 def count_zero_crossings_left(position, distance):
@@ -69,10 +64,17 @@ def number_of_clicks_on_zero(data_file):
 
 
 if __name__ == "__main__":
-    TESTS = [
-        TestCase("01_example_01"),
-        TestCase("01_puzzle_input"),
-    ]
-
-    run(rotations_ending_on_zero, TESTS, part="part1")
-    run(number_of_clicks_on_zero, TESTS, part="part2")
+    run(
+        rotations_ending_on_zero,
+        [
+            TestCase("data/01_example_01", 3),
+            TestCase("data/01_puzzle_input", 1007),
+        ],
+    )
+    run(
+        number_of_clicks_on_zero,
+        [
+            TestCase("data/01_example_01", 6),
+            TestCase("data/01_puzzle_input", 5820),
+        ],
+    )

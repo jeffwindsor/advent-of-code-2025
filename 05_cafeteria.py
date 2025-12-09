@@ -1,10 +1,10 @@
-from aoc import parse_delimited, read_data_as_sections, run, TestCase
+from aoc import Input, run, TestCase
 
 
 def parse(data_file):
-    sections = read_data_as_sections(data_file, as_lines=True)
-    ranges = [tuple(parse_delimited(line, "-", int)) for line in sections[0]]
-    ids = [int(line) for line in sections[1]]
+    ranges_section, ids_section = Input(data_file).as_sections()
+    ranges = [tuple(int(x) for x in line.split("-")) for line in ranges_section.as_lines()]
+    ids = [int(line) for line in ids_section.as_lines()]
     return ranges, ids
 
 
@@ -40,17 +40,24 @@ def count_fresh_ingredients(data_file):
 
 
 def count_total_fresh_ids(data_file):
-    sections = read_data_as_sections(data_file, as_lines=True)
-    ranges = [tuple(parse_delimited(line, "-", int)) for line in sections[0]]
+    ranges_section, _ = Input(data_file).as_sections()
+    ranges = [tuple(int(x) for x in line.split("-")) for line in ranges_section.as_lines()]
     merged = merge_ranges(ranges)
     return sum(end - start + 1 for start, end in merged)
 
 
 if __name__ == "__main__":
-    TESTS = [
-        TestCase("05_example_01"),
-        TestCase("05_puzzle_input"),
-    ]
-
-    run(count_fresh_ingredients, TESTS, part="part1")
-    run(count_total_fresh_ids, TESTS, part="part2")
+    run(
+        count_fresh_ingredients,
+        [
+            TestCase("data/05_example_01", 3),
+            TestCase("data/05_puzzle_input", 674),
+        ],
+    )
+    run(
+        count_total_fresh_ids,
+        [
+            TestCase("data/05_example_01", 14),
+            TestCase("data/05_puzzle_input", 352509891817881),
+        ],
+    )

@@ -1,8 +1,8 @@
-from aoc import read_data_as_lines, run, TestCase
+from aoc import Input, run, TestCase
 
 
 def parse(data_file):
-    return read_data_as_lines(data_file)
+    return Input(data_file).as_lines()
 
 
 def strongest_batteries(battery_bank: str, max_batteries: int) -> int:
@@ -39,18 +39,17 @@ def calculate_total_joltage_12_batteries(data_file):
 
 
 if __name__ == "__main__":
-    TESTS = [
-        TestCase("03_example_01"),
-        TestCase("03_puzzle_input"),
-    ]
-
     run(
         calculate_total_joltage_2_batteries,
-        TESTS,
-        part="part1",
+        [
+            TestCase("data/03_example_01", 357),
+            TestCase("data/03_puzzle_input", 17229),
+        ],
     )
     run(
         calculate_total_joltage_12_batteries,
-        TESTS,
-        part="part2",
+        [
+            TestCase("data/03_example_01", 3121910778619),
+            TestCase("data/03_puzzle_input", 170520923035051),
+        ],
     )
