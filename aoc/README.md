@@ -68,6 +68,9 @@ input = Input("data/puzzle.txt")
 
 # From string
 input = Input.from_string("1,2,3\n4,5,6")
+
+# Preserve whitespace (useful for structured spacing)
+input = Input.from_file("data/puzzle.txt", strip_content=False)
 ```
 
 **Lines & Sections**
@@ -115,6 +118,17 @@ input.as_adjacency_list("-", directed=True)  # Directional edges
 input.content                       # Raw string content
 extract_ints(text)                  # Extract all integers from text
 extract_pattern(text, r"\d+")       # Extract regex matches
+```
+
+**Whitespace Control**
+```python
+# Default: strips whitespace from file and lines
+Input.from_file("data.txt").as_lines()
+# → ['line1', 'line2']  (leading/trailing spaces removed)
+
+# Preserve structural spacing (e.g., column-aligned data)
+Input.from_file("data.txt", strip_content=False).as_lines(skip_empty=False)
+# → ['  line1  ', ' line2 ', '']  (preserves spaces and empty lines)
 ```
 
 ### Grid - 2D array with coordinate access
