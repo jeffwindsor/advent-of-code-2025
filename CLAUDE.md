@@ -44,15 +44,15 @@ Each daily puzzle follows this structure:
 ```python
 from aoc import read_data_as_lines, run, TestCase
 
-def parse(data):
+def parse(args):
     # Parse input data into usable format
     pass
 
-def part1_solution(data):
+def part1_solution(args):
     # Solve part 1
     pass
 
-def part2_solution(data):
+def part2_solution(args):
     # Solve part 2
     pass
 
@@ -68,6 +68,21 @@ if __name__ == "__main__":
         TestCase("NN_example_01", expected_value),
         TestCase("NN_puzzle_input", expected_value),
     ])
+```
+
+### Multi-Argument Functions
+
+When solution functions need additional parameters beyond the data file:
+
+```python
+def solve(args, num_iterations):
+    coords = parse(args)
+    # ... implementation
+
+run(solve, [
+    TestCase(["data/08_example_01", 10], expected=40),
+    TestCase(["data/08_puzzle_input", 1000], expected=131150),
+])
 ```
 
 ### AOC Toolkit Package
@@ -87,7 +102,7 @@ This project uses the external [aoc-toolkit](https://github.com/jeffwindsor/aoc-
 - `extract_ints()` - extract integers from text
 
 **`aoc.testing`** - Test framework:
-- `TestCase(data_file, expected)` - test case definition
+- `TestCase(args, expected)` - test case definition (args can be a string or list of arguments)
 - `run(func, test_cases)` - execute tests with colored output
 - Displays ✓/✗ with actual vs expected values
 - Optional performance metrics (time, memory)

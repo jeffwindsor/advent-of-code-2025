@@ -1,8 +1,8 @@
 from aoc import Input, run, TestCase
 
 
-def parse(data_file):
-    ranges = Input(data_file).content.split(",")
+def parse(args):
+    ranges = Input(args).content.split(",")
     return [tuple(int(x) for x in r.split("-")) for r in ranges]
 
 
@@ -32,8 +32,8 @@ def has_repeating_pattern(number):
     return False
 
 
-def sum_matching_numbers(data_file, predicate):
-    ranges = parse(data_file)
+def sum_matching_numbers(args, predicate):
+    ranges = parse(args)
     return sum(
         number
         for start, end in ranges
@@ -42,12 +42,12 @@ def sum_matching_numbers(data_file, predicate):
     )
 
 
-def sum_of_invalid_ids1(data_file):
-    return sum_matching_numbers(data_file, has_pattern_repeated_exactly_twice)
+def sum_of_invalid_ids1(args):
+    return sum_matching_numbers(args, has_pattern_repeated_exactly_twice)
 
 
-def sum_of_invalid_ids2(data_file):
-    return sum_matching_numbers(data_file, has_repeating_pattern)
+def sum_of_invalid_ids2(args):
+    return sum_matching_numbers(args, has_repeating_pattern)
 
 
 if __name__ == "__main__":

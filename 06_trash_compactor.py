@@ -13,8 +13,8 @@ def parse_and_calculate(entry):
     return sum(numbers) if op == SUM_OP else prod(numbers)
 
 
-def parse_with_structure(data_file):
-    lines = Input.from_file(data_file, strip_content=False).as_lines()
+def parse_with_structure(args):
+    lines = Input.from_file(args, strip_content=False).as_lines()
     max_len = max(len(line) for line in lines)
     return [line.ljust(max_len) for line in lines]
 
@@ -86,13 +86,13 @@ def solve_problem(lines, start, end):
     return sum(numbers) if operator == SUM_OP else prod(numbers)
 
 
-def cephalopod_math_homework(data_file):
-    columns = Input.from_file(data_file).as_columns()
+def cephalopod_math_homework(args):
+    columns = Input.from_file(args).as_columns()
     return sum(parse_and_calculate(col) for col in columns)
 
 
-def cephalopod_math_homework_for_real(data_file):
-    lines = parse_with_structure(data_file)
+def cephalopod_math_homework_for_real(args):
+    lines = parse_with_structure(args)
     problems = find_problem_ranges(lines)
     return sum(solve_problem(lines, start, end) for start, end in problems)
 

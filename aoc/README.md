@@ -263,9 +263,62 @@ def state_neighbors(state):
             ((coord, turn_clockwise[direction]), 1000)]    # Turn
 ```
 
-## Testing
+### Testing - Test framework with colored output
 
-Run tests locally:
+Simple test framework for validating puzzle solutions.
+
+```python
+from aoc import run, TestCase
+
+def solve(args):
+    data = Input(args).as_lines()
+    return len(data)
+
+# Single argument (file path)
+run(solve, [
+    TestCase("data/01_example_01", expected=10),
+    TestCase("data/01_puzzle_input", expected=200),
+])
+```
+
+**Multi-argument functions**
+
+When your solution needs additional parameters:
+
+```python
+def solve(args, iterations):
+    data = Input(args).as_lines()
+    # ... process with iterations
+
+# Pass multiple arguments as a list
+run(solve, [
+    TestCase(["data/08_example_01", 10], expected=40),
+    TestCase(["data/08_puzzle_input", 1000], expected=131150),
+])
+```
+
+**Features**
+- Colored output: Green ✓ for pass, Red ✗ for fail
+- Shows actual vs expected values on mismatch
+- Optional performance metrics (time, memory) via `AOC_PERF=1`
+- Summary line showing pass/fail count
+
+**Performance Tracking**
+
+```bash
+# Enable performance metrics
+export AOC_PERF=1
+python solution.py
+
+# Output shows timing and memory
+# solve
+#   data/example.txt: 42 (1.23ms, 512KB)
+#   2/2 tests passed
+```
+
+## Package Testing
+
+Run package tests locally:
 
 ```bash
 # Install nox
