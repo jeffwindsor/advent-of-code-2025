@@ -315,6 +315,52 @@ def find_max_clique(graph: dict[Any, set[Any]]) -> set[Any]:
     return max(cliques, key=len) if cliques else set()
 
 
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+        self.size = [1] * n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        root_x = self.find(x)
+        root_y = self.find(y)
+
+        if root_x == root_y:
+            return False
+
+        if self.rank[root_x] < self.rank[root_y]:
+            self.parent[root_x] = root_y
+            self.size[root_y] += self.size[root_x]
+        elif self.rank[root_x] > self.rank[root_y]:
+            self.parent[root_y] = root_x
+            self.size[root_x] += self.size[root_y]
+        else:
+            self.parent[root_y] = root_x
+            self.size[root_x] += self.size[root_y]
+            self.rank[root_x] += 1
+
+        return True
+
+    def get_component_sizes(self):
+        sizes = {}
+        for i in range(len(self.parent)):
+            root = self.find(i)
+            if root not in sizes:
+                sizes[root] = self.size[root]
+        return list(sizes.values())
+
+    def count_components(self):
+        roots = set()
+        for i in range(len(self.parent)):
+            roots.add(self.find(i))
+        return len(roots)
+
+
 __all__ = [
     "bfs",
     "dfs",
@@ -322,4 +368,5 @@ __all__ = [
     "dfs_grid_path",
     "dijkstra",
     "find_max_clique",
+    "UnionFind",
 ]

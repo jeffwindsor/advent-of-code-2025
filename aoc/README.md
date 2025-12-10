@@ -10,7 +10,7 @@ Reusable utilities for Advent of Code puzzles.
 
 ```python
 # Flat imports (recommended) - defaults to 2D
-from aoc import Input, Grid, Coord, Dimension, bfs, dijkstra, run, TestCase
+from aoc import Input, Grid, Coord, Dimension, bfs, dijkstra, UnionFind, run, TestCase
 
 # Explicit 2D imports
 from aoc.d2 import Coord, Grid, Dimension
@@ -20,7 +20,7 @@ from aoc.d3 import Coord, Grid, Dimension
 
 # Other modules
 from aoc.input import Input
-from aoc.graph import bfs, dijkstra
+from aoc.graph import bfs, dijkstra, UnionFind
 from aoc.testing import run, TestCase
 ```
 
@@ -288,6 +288,27 @@ graph = {'A': {'B', 'C'}, 'B': {'A', 'C'}, 'C': {'A', 'B'}}
 clique = find_max_clique(graph)                  # {'A', 'B', 'C'}
 ```
 
+**UnionFind - Disjoint set union (DSU) for connectivity**
+```python
+# Track which elements are connected (by index, not by value)
+coords = [Coord(0, 0), Coord(1, 1), Coord(2, 2)]
+uf = UnionFind(len(coords))
+
+# Connect elements by index
+uf.union(0, 1)                      # Connect coords[0] and coords[1]
+uf.union(1, 2)                      # Connect coords[1] and coords[2]
+
+# Query connectivity
+uf.find(0) == uf.find(2)            # True (same component)
+uf.count_components()               # 1 (all connected)
+uf.get_component_sizes()            # [3] (one component with 3 elements)
+
+# Works with any dimension coordinates (stores indices, not coordinates)
+coords_2d = [Coord(0, 0), Coord(1, 1)]           # 2D
+coords_3d = [Coord(0, 0, 0), Coord(1, 1, 1)]     # 3D
+coords_nd = [(1, 2, 3, 4), (5, 6, 7, 8)]         # N-dimensional
+```
+
 **Neighbor function pattern**
 ```python
 # Simple neighbor function
@@ -391,7 +412,7 @@ rm .aoc_config
 aoc/
 ├── d2.py           # 2D coordinates and grids
 ├── d3.py           # 3D coordinates and grids
-├── graph.py        # Search algorithms (BFS, DFS, Dijkstra, max clique)
+├── graph.py        # Search algorithms (BFS, DFS, Dijkstra, max clique, UnionFind)
 ├── input.py        # Data reading and parsing
 ├── math.py         # Mathematical utilities
 └── testing.py      # Test framework

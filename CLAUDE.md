@@ -115,6 +115,7 @@ This project uses the local `aoc` package for reusable utilities. Key modules:
 - `dfs_grid_path()` - grid path finding
 - `dijkstra()` - shortest path
 - `find_max_clique()` - clique detection
+- `UnionFind` - disjoint set union for connectivity (works with 2D/3D coords by index)
 
 **`aoc.math`** - Mathematical utilities:
 - `count_continuous_segments()` - segment counting
@@ -201,4 +202,5 @@ run(part1_solution, TESTS, part="part1")
 - **2D Grid Problems**: Use `aoc.d2` (Coord, Grid) for 2D spatial manipulation
 - **3D Grid Problems**: Use `aoc.d3` (Coord, Grid) for 3D spatial manipulation
 - **Graph Problems**: Use `aoc.graph` algorithms (BFS, DFS, Dijkstra)
+- **Connectivity Problems**: Use `UnionFind` for clustering, connected components, or merging groups
 - **Data Parsing**: Use appropriate `read_data_as_*()` function for input format

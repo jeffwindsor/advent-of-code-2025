@@ -41,6 +41,7 @@ __all__ = [
     "dfs_grid_path",
     "dijkstra",
     "find_max_clique",
+    "UnionFind",
     # From input
     "Input",
     "Parser",

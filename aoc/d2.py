@@ -49,6 +49,12 @@ class Coord:
         """Calculate Manhattan distance to another coordinate."""
         return abs(self.row - other.row) + abs(self.col - other.col)
 
+    def squared_distance(self, other: Coord) -> int:
+        return (self.row - other.row) ** 2 + (self.col - other.col) ** 2
+
+    def euclidean_distance(self, other: Coord) -> float:
+        return (self.squared_distance(other)) ** 0.5
+
     def neighbors(
         self, max_bounds: Coord, directions: list[Coord] | None = None
     ) -> list[Coord]:
