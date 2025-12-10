@@ -4,8 +4,8 @@ WHEEL_SIZE = 100
 START_POSITION = 50
 
 
-def parse(data_file):
-    lines = Input(data_file).as_lines()
+def parse(args):
+    lines = Input(args).as_lines()
     return [(line[0], int(line[1:])) for line in lines]
 
 
@@ -30,8 +30,8 @@ def rotate_right(position, distance):
     return (position + distance) % WHEEL_SIZE
 
 
-def rotations_ending_on_zero(data_file):
-    rotations = parse(data_file)
+def rotations_ending_on_zero(args):
+    rotations = parse(args)
     position = START_POSITION
     count = 0
 
@@ -47,8 +47,8 @@ def rotations_ending_on_zero(data_file):
     return count
 
 
-def number_of_clicks_on_zero(data_file):
-    rotations = parse(data_file)
+def number_of_clicks_on_zero(args):
+    rotations = parse(args)
     position = START_POSITION
     total_clicks = 0
 

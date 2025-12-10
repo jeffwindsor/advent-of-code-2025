@@ -1,8 +1,8 @@
 from aoc import Input, run, TestCase
 
 
-def parse(data_file):
-    return Input(data_file).as_lines()
+def parse(args):
+    return Input(args).as_lines()
 
 
 def strongest_batteries(battery_bank: str, max_batteries: int) -> int:
@@ -25,17 +25,17 @@ def strongest_batteries(battery_bank: str, max_batteries: int) -> int:
     return int("".join(selected_batteries))
 
 
-def calculate_total_joltage(data_file, max_batteries):
-    battery_banks = parse(data_file)
+def calculate_total_joltage(args, max_batteries):
+    battery_banks = parse(args)
     return sum(strongest_batteries(bank, max_batteries) for bank in battery_banks)
 
 
-def calculate_total_joltage_2_batteries(data_file):
-    return calculate_total_joltage(data_file, max_batteries=2)
+def calculate_total_joltage_2_batteries(args):
+    return calculate_total_joltage(args, max_batteries=2)
 
 
-def calculate_total_joltage_12_batteries(data_file):
-    return calculate_total_joltage(data_file, max_batteries=12)
+def calculate_total_joltage_12_batteries(args):
+    return calculate_total_joltage(args, max_batteries=12)
 
 
 if __name__ == "__main__":

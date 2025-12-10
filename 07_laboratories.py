@@ -5,8 +5,8 @@ START = "S"
 SPLITTER = "^"
 
 
-def parse(data_file: str) -> tuple[Grid, Coord, dict[int, set[int]]]:
-    grid = Input(data_file).as_grid()
+def parse(args: str) -> tuple[Grid, Coord, dict[int, set[int]]]:
+    grid = Input(args).as_grid()
     start = grid.find_first(START)
     if start is None:
         raise ValueError(f"No start position '{START}' found in grid")
@@ -19,8 +19,8 @@ def parse(data_file: str) -> tuple[Grid, Coord, dict[int, set[int]]]:
     return grid, start, splitters_by_row
 
 
-def unique_splitters_visited(data_file: str) -> int:
-    grid, start, splitters_by_row = parse(data_file)
+def unique_splitters_visited(args: str) -> int:
+    grid, start, splitters_by_row = parse(args)
 
     beam_columns = {start.col}
     splitters_hit = set()
@@ -41,8 +41,8 @@ def unique_splitters_visited(data_file: str) -> int:
     return len(splitters_hit)
 
 
-def quantum_beams(data_file: str) -> int:
-    grid, start, splitters_by_row = parse(data_file)
+def quantum_beams(args: str) -> int:
+    grid, start, splitters_by_row = parse(args)
 
     beams = {start.col: 1}
 

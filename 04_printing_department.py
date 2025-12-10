@@ -1,8 +1,8 @@
 from aoc import Coord, Grid, Input, run, TestCase
 
 
-def parse(data_file):
-    return Input(data_file).as_grid()
+def parse(args):
+    return Input(args).as_grid()
 
 
 def count_adjacent_rolls(grid, position):
@@ -18,13 +18,13 @@ def find_removable_rolls(grid):
     return {pos for pos, _ in grid.coords() if is_removable(grid, pos)}
 
 
-def count_accessible_rolls(data_file):
-    grid = parse(data_file)
+def count_accessible_rolls(args):
+    grid = parse(args)
     return len(find_removable_rolls(grid))
 
 
-def count_total_removable_rolls(data_file):
-    grid = parse(data_file)
+def count_total_removable_rolls(args):
+    grid = parse(args)
     total_removed = 0
 
     while removable := find_removable_rolls(grid):

@@ -1,8 +1,8 @@
 from aoc import Input, run, TestCase
 
 
-def parse(data_file):
-    ranges_section, ids_section = Input(data_file).as_sections()
+def parse(args):
+    ranges_section, ids_section = Input(args).as_sections()
     ranges = [tuple(int(x) for x in line.split("-")) for line in ranges_section.as_lines()]
     ids = [int(line) for line in ids_section.as_lines()]
     return ranges, ids
@@ -34,13 +34,13 @@ def merge_ranges(ranges):
     return merged
 
 
-def count_fresh_ingredients(data_file):
-    ranges, ids = parse(data_file)
+def count_fresh_ingredients(args):
+    ranges, ids = parse(args)
     return sum(1 for ingredient_id in ids if is_fresh(ingredient_id, ranges))
 
 
-def count_total_fresh_ids(data_file):
-    ranges_section, _ = Input(data_file).as_sections()
+def count_total_fresh_ids(args):
+    ranges_section, _ = Input(args).as_sections()
     ranges = [tuple(int(x) for x in line.split("-")) for line in ranges_section.as_lines()]
     merged = merge_ranges(ranges)
     return sum(end - start + 1 for start, end in merged)
