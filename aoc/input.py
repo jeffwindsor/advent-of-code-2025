@@ -114,8 +114,7 @@ Input
 
 from collections import defaultdict
 from re import findall, error, search
-from .coord import Coord
-from .grid import Grid
+from .d2 import Coord, Grid
 
 
 def extract_ints(text: str, pattern: str = r"-?\d+") -> list[int]:

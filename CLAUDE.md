@@ -2,25 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Dependencies
-
-This project uses [aoc-toolkit](https://github.com/jeffwindsor/aoc-toolkit) v1.0.1 for common Advent of Code utilities.
-
-### Installation
-
-```bash
-pip install -r requirements.txt
-```
-
-Or manually:
-```bash
-pip install git+https://github.com/jeffwindsor/aoc-toolkit.git@v1.0.1
-```
-
-### Documentation
-
-Full aoc-toolkit documentation: https://github.com/jeffwindsor/aoc-toolkit
-
 ## Development Commands
 
 ### Running Solutions
@@ -85,9 +66,9 @@ run(solve, [
 ])
 ```
 
-### AOC Toolkit Package
+### AOC Package
 
-This project uses the external [aoc-toolkit](https://github.com/jeffwindsor/aoc-toolkit) package for reusable utilities. Key modules:
+This project uses the local `aoc` package for reusable utilities. Key modules:
 
 **`aoc.data`** - Data I/O utilities:
 - `read_data()` - raw text
@@ -107,18 +88,26 @@ This project uses the external [aoc-toolkit](https://github.com/jeffwindsor/aoc-
 - Displays ✓/✗ with actual vs expected values
 - Optional performance metrics (time, memory)
 
-**`aoc.coord`** - Coordinate handling:
-- `Coord` - coordinate type/operations
-- `filter_coords_in_bounds()` - boundary checking
+**`aoc.d2`** - 2D coordinate and grid operations:
+- `Coord(row, col)` - immutable 2D coordinate
+- `Dimension(width, height)` - 2D grid dimensions
+- `Grid` - 2D grid wrapper with coordinate-based access
+- Direction constants: `ZERO`, `UP`, `DOWN`, `LEFT`, `RIGHT`, `UP_LEFT`, etc.
+- Direction collections: `DIRECTIONS_CARDINAL`, `DIRECTIONS_INTERCARDINAL`, `DIRECTIONS_ALL`
+- Coord methods: `__add__`, `__sub__`, `in_bounds`, `manhattan_distance`, `neighbors`
+- Grid methods: `coords`, `find_first`, `find_all`, `group_by_value`, `search_in_direction`, `create`
+- `filter_coords_in_bounds()` - filter coordinates within bounds
 
-**`aoc.grid`** - 2D grid operations:
-- `Grid` - grid type alias
-- Grid size/bounds functions
-- Get/set operations
-- Find operations (first/all matching positions)
-- Direction searching
-- Grouping by value
-- Visited tracking grids
+**`aoc.d3`** - 3D coordinate and grid operations:
+- `Coord(x, y, z)` - immutable 3D coordinate
+- `Dimension(width, height, depth)` - 3D grid dimensions
+- `Grid` - 3D grid wrapper with coordinate-based access
+- Direction constants: `ZERO`, `UP`, `DOWN`, `LEFT`, `RIGHT`, `FORWARD`, `BACK`
+- Direction collection: `DIRECTIONS_CARDINAL` (6 directions)
+- Coord methods: `__add__`, `__sub__`, `in_bounds`, `manhattan_distance`, `neighbors`
+- Grid methods: `coords`, `find_first`, `find_all`, `group_by_value`, `create`
+- `filter_coords_in_bounds()` - filter coordinates within bounds
+- Note: Requires explicit import: `from aoc.d3 import Coord, Grid`
 
 **`aoc.graph`** - Graph algorithms:
 - `bfs()` - breadth-first search
@@ -130,12 +119,6 @@ This project uses the external [aoc-toolkit](https://github.com/jeffwindsor/aoc-
 **`aoc.math`** - Mathematical utilities:
 - `count_continuous_segments()` - segment counting
 - `count_digits()` - digit counting
-
-**For detailed documentation**, see:
-- [Data I/O Guide](https://github.com/jeffwindsor/aoc-toolkit/blob/main/docs/data_io.md)
-- [Testing Guide](https://github.com/jeffwindsor/aoc-toolkit/blob/main/docs/testing.md)
-- [Coordinates & Grids](https://github.com/jeffwindsor/aoc-toolkit/blob/main/docs/coordinates.md)
-- [Algorithms Guide](https://github.com/jeffwindsor/aoc-toolkit/blob/main/docs/algorithms.md)
 
 ### Data File Conventions
 - Location: `data/` directory
@@ -214,7 +197,8 @@ run(part1_solution, TESTS, part="part1")
 
 - **Separation of Concerns**: Parse once, solve multiple parts
 - **Test-Driven**: Include test cases with expected values from the start
-- **Reuse Utilities**: Check [aoc-toolkit](https://github.com/jeffwindsor/aoc-toolkit) before implementing common operations
-- **Grid Problems**: Use `aoc.grid` and `aoc.coord` for 2D grid manipulation
+- **Reuse Utilities**: Use `aoc` package utilities before implementing common operations
+- **2D Grid Problems**: Use `aoc.d2` (Coord, Grid) for 2D spatial manipulation
+- **3D Grid Problems**: Use `aoc.d3` (Coord, Grid) for 3D spatial manipulation
 - **Graph Problems**: Use `aoc.graph` algorithms (BFS, DFS, Dijkstra)
 - **Data Parsing**: Use appropriate `read_data_as_*()` function for input format

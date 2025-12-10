@@ -3,8 +3,7 @@
 from typing import Any, Callable
 from collections import deque
 from heapq import heappush, heappop
-from .coord import Coord
-from .grid import Grid
+from .d2 import Coord, Grid
 
 
 def bfs(
