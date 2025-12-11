@@ -2,9 +2,15 @@ from aoc import Input, run, TestCase
 from itertools import groupby
 from math import prod
 from operator import itemgetter
+from typing import NamedTuple
 
 SEPARATOR = " "
 SUM_OP = "+"
+
+
+class ColumnRange(NamedTuple):
+    start: int
+    end: int
 
 
 def parse_and_calculate(entry):
@@ -54,7 +60,7 @@ def find_problem_ranges(lines):
     ]
 
     return [
-        (idx[0], idx[-1] + 1)
+        ColumnRange(idx[0], idx[-1] + 1)
         for skip, problem_space in groupby(problem_spaces, key=itemgetter(1))
         if not skip and (idx := [i for i, _ in problem_space])
     ]
@@ -94,7 +100,7 @@ def cephalopod_math_homework(args):
 def cephalopod_math_homework_for_real(args):
     lines = parse_with_structure(args)
     problems = find_problem_ranges(lines)
-    return sum(solve_problem(lines, start, end) for start, end in problems)
+    return sum(solve_problem(lines, problem.start, problem.end) for problem in problems)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,18 @@
 from aoc import Input, run, TestCase
+from typing import NamedTuple
 
 WHEEL_SIZE = 100
 START_POSITION = 50
 
 
+class Rotation(NamedTuple):
+    direction: str
+    distance: int
+
+
 def parse(args):
     lines = Input(args).as_lines()
-    return [(line[0], int(line[1:])) for line in lines]
+    return [Rotation(line[0], int(line[1:])) for line in lines]
 
 
 def count_zero_crossings_left(position, distance):
@@ -35,11 +41,11 @@ def rotations_ending_on_zero(args):
     position = START_POSITION
     count = 0
 
-    for direction, distance in rotations:
-        if direction == "L":
-            position = rotate_left(position, distance)
+    for rotation in rotations:
+        if rotation.direction == "L":
+            position = rotate_left(position, rotation.distance)
         else:
-            position = rotate_right(position, distance)
+            position = rotate_right(position, rotation.distance)
 
         if position == 0:
             count += 1
@@ -52,13 +58,13 @@ def number_of_clicks_on_zero(args):
     position = START_POSITION
     total_clicks = 0
 
-    for direction, distance in rotations:
-        if direction == "L":
-            total_clicks += count_zero_crossings_left(position, distance)
-            position = rotate_left(position, distance)
+    for rotation in rotations:
+        if rotation.direction == "L":
+            total_clicks += count_zero_crossings_left(position, rotation.distance)
+            position = rotate_left(position, rotation.distance)
         else:  # "R"
-            total_clicks += count_zero_crossings_right(position, distance)
-            position = rotate_right(position, distance)
+            total_clicks += count_zero_crossings_right(position, rotation.distance)
+            position = rotate_right(position, rotation.distance)
 
     return total_clicks
 
