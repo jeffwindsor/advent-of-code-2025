@@ -8,10 +8,10 @@ from typing import Any, ClassVar, Iterator
 
 @dataclass(frozen=True)
 class Coord:
-    """Immutable 2D coordinate with row and column components."""
+    """Immutable 2D coordinate with x and y components."""
 
-    row: int
-    col: int
+    x: int
+    y: int
 
     # Class-level direction constants (defined after class for proper initialization)
     ZERO: ClassVar[Coord]
@@ -31,11 +31,26 @@ class Coord:
 
     def __add__(self, other: Coord) -> Coord:
         """Add two coordinates component-wise."""
-        return Coord(self.row + other.row, self.col + other.col)
+        return Coord(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other: Coord) -> Coord:
         """Subtract two coordinates component-wise."""
-        return Coord(self.row - other.row, self.col - other.col)
+        return Coord(self.x - other.x, self.y - other.y)
+
+    @classmethod
+    def from_rc(cls, row: int, col: int) -> Coord:
+        """Create coordinate from row,col (grid) format."""
+        return cls(x=col, y=row)
+
+    @property
+    def row(self) -> int:
+        """Get row coordinate (y)."""
+        return self.y
+
+    @property
+    def col(self) -> int:
+        """Get column coordinate (x)."""
+        return self.x
 
     def in_bounds(self, max_bounds: Coord, min_bounds: Coord | None = None) -> bool:
         """Check if coordinate is within bounds (inclusive)."""
@@ -84,13 +99,13 @@ class Dimension:
 
 # Direction constants as class attributes
 Coord.ZERO = Coord(0, 0)
-Coord.UP = Coord(-1, 0)
-Coord.RIGHT = Coord(0, 1)
-Coord.DOWN = Coord(1, 0)
-Coord.LEFT = Coord(0, -1)
+Coord.UP = Coord(0, -1)
+Coord.RIGHT = Coord(1, 0)
+Coord.DOWN = Coord(0, 1)
+Coord.LEFT = Coord(-1, 0)
 Coord.UP_LEFT = Coord(-1, -1)
-Coord.DOWN_LEFT = Coord(1, -1)
-Coord.UP_RIGHT = Coord(-1, 1)
+Coord.DOWN_LEFT = Coord(-1, 1)
+Coord.UP_RIGHT = Coord(1, -1)
 Coord.DOWN_RIGHT = Coord(1, 1)
 
 Coord.DIRECTIONS_CARDINAL = [Coord.UP, Coord.RIGHT, Coord.DOWN, Coord.LEFT]
@@ -158,7 +173,7 @@ class Grid:
     def max_bounds(self) -> Coord:
         """Return maximum valid indices as Dimensions(max_col, max_row)."""
         size = self.size
-        return Coord(col=size.width - 1, row=size.height - 1)
+        return Coord.from_rc(col=size.width - 1, row=size.height - 1)
 
     def coords(self) -> Iterator[tuple[Coord, Any]]:
         """
@@ -169,7 +184,7 @@ class Grid:
         """
         for r, row in enumerate(self.data):
             for c, value in enumerate(row):
-                yield Coord(r, c), value
+                yield Coord.from_rc(r, c), value
 
     def find_first(self, value: Any) -> Coord | None:
         """Find first occurrence of value in grid, return coordinate or None."""

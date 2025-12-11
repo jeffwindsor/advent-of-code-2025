@@ -475,10 +475,10 @@ class Input:
 
         Example:
             >>> Input.from_string("1,2\\n3,4\\n5,6").as_coords()
-            [Coord(1, 2), Coord(3, 4), Coord(5, 6)]
+            [Coord.from_rc(1, 2), Coord.from_rc(3, 4), Coord.from_rc(5, 6)]
         """
         return [
-            Coord(int(row), int(col))
+            Coord.from_rc(int(row), int(col))
             for row, col in (line.split(separator) for line in self.as_lines())
         ]
 

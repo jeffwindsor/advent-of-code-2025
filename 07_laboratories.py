@@ -34,7 +34,7 @@ def unique_splitters_visited(args: str) -> int:
 
     for row in range(data.start.row + 1, data.grid.max_bounds.row + 1):
         hits = beam_columns & data.splitters_by_row.get(row, set())
-        splitters_hit.update(Coord(row, col) for col in hits)
+        splitters_hit.update(Coord.from_rc(row, col) for col in hits)
 
         beam_columns = (beam_columns - hits) | {
             neighbor

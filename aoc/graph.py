@@ -213,6 +213,96 @@ def dfs_grid_path(
     return result if result is not None else []
 
 
+def flood_fill(
+    grid: Grid,
+    start: Coord,
+    walkable_values: set[Any],
+    directions: list[Coord] | None = None,
+) -> set[Coord]:
+    """
+    Non-destructive flood fill that returns all reachable coordinates.
+
+    Uses BFS to explore all cells reachable from start position through
+    walkable cells. Does not modify the grid.
+
+    Args:
+        grid: Grid instance to search through
+        start: Starting coordinate for flood fill
+        walkable_values: Set of grid values that can be traversed
+        directions: Direction vectors to use (default: DIRECTIONS_CARDINAL for 4-way)
+
+    Returns:
+        Set of all coordinates reachable from start (empty set if start invalid)
+
+    Example:
+        >>> grid = Grid([['#', '.', '#'], ['.', '.', '.'], ['#', '.', '#']])
+        >>> visited = flood_fill(grid, Coord(1, 1), {'.'})
+        >>> len(visited)
+        5
+
+    Note:
+        For in-place marking of visited cells, use flood_fill_mark() instead.
+    """
+    if start not in grid or grid[start] not in walkable_values:
+        return set()
+
+    directions = directions or Coord.DIRECTIONS_CARDINAL
+
+    def neighbors_func(coord: Coord) -> list[Coord]:
+        return [
+            neighbor
+            for direction in directions
+            if (neighbor := coord + direction) in grid
+            and grid[neighbor] in walkable_values
+        ]
+
+    distances = bfs(start, neighbors_func)
+    return set(distances.keys())
+
+
+def flood_fill_mark(
+    grid: Grid,
+    start: Coord,
+    walkable_values: set[Any],
+    mark_value: Any,
+    directions: list[Coord] | None = None,
+) -> int:
+    """
+    Destructive flood fill that marks all reachable coordinates in-place.
+
+    Uses flood_fill() to find reachable cells, then modifies the grid by
+    setting all visited cells to mark_value.
+
+    Args:
+        grid: Grid instance to modify
+        start: Starting coordinate for flood fill
+        walkable_values: Set of grid values that can be traversed
+        mark_value: Value to mark visited cells with
+        directions: Direction vectors to use (default: DIRECTIONS_CARDINAL for 4-way)
+
+    Returns:
+        Count of cells marked (0 if start invalid or no cells reachable)
+
+    Example:
+        >>> grid = Grid([['#', '.', '#'], ['.', '.', '.'], ['#', '.', '#']])
+        >>> count = flood_fill_mark(grid, Coord(1, 1), {'.'}, 'X')
+        >>> count
+        5
+        >>> grid[Coord(1, 1)]
+        'X'
+
+    Note:
+        This modifies the grid in-place. For non-destructive analysis,
+        use flood_fill() instead.
+    """
+    visited = flood_fill(grid, start, walkable_values, directions)
+
+    for coord in visited:
+        grid[coord] = mark_value
+
+    return len(visited)
+
+
 def dijkstra(
     start: Any,
     neighbors_func: Callable[[Any], list[tuple[Any, int]]],
@@ -366,6 +456,8 @@ __all__ = [
     "dfs",
     "bfs_grid_path",
     "dfs_grid_path",
+    "flood_fill",
+    "flood_fill_mark",
     "dijkstra",
     "find_max_clique",
     "UnionFind",
