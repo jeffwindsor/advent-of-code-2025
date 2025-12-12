@@ -150,6 +150,12 @@ This project uses the local `aoc` package for reusable utilities. Key modules:
 - **No Docstrings**: Do not add docstrings to functions
 - **No Comments**: Do not add comments unless absolutely critical for understanding
 - **Self-Documenting Code**: Use clear function and variable names instead
+- **Pythonic & Functional**: Prefer readable, understandable code using pythonic idioms and functional programming patterns where reasonable
+  - Use list comprehensions and generator expressions over imperative loops
+  - Leverage built-in functions like `map`, `filter`, `min`, `max` with appropriate defaults
+  - Extract helper functions to separate concerns
+  - Use type aliases for complex nested types
+  - Use NamedTuples for structured data over plain tuples or dicts
 
 ## Key Patterns
 
