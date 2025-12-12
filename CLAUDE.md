@@ -131,50 +131,7 @@ This project uses the local `aoc` package for reusable utilities. Key modules:
 ### Solution File Conventions
 - Naming: `{day}_{description}.py` (e.g., `01_secret_entrance.py`)
 - Always include both example and puzzle input test cases
-- Expected values stored in `.answer` files (see Answer File Pattern below)
-
-### Answer File Pattern (PREFERRED)
-Expected test answers are stored in separate `.{part}.answer` files alongside data files:
-
-**File Structure:**
-```
-data/04_example_01                # Test input data
-data/04_example_01.part1.answer   # Part 1 expected answer
-data/04_example_01.part2.answer   # Part 2 expected answer
-data/04_puzzle_input              # Puzzle input (gitignored)
-data/04_puzzle_input.part1.answer # Part 1 answer (gitignored)
-data/04_puzzle_input.part2.answer # Part 2 answer (gitignored)
-```
-
-**Usage in Solution Files:**
-```python
-if __name__ == "__main__":
-    TESTS = [
-        TestCase("04_example_01"),
-        TestCase("04_puzzle_input"),
-    ]
-
-    run(part1_solution, TESTS, part="part1")
-    run(part2_solution, TESTS, part="part2")
-```
-
-**Override with explicit expected value when needed:**
-```python
-TESTS = [
-    TestCase("04_example_01", 13),  # explicit value overrides answer file
-    TestCase("04_puzzle_input"),    # loads from answer file
-]
-
-run(part1_solution, TESTS, part="part1")
-```
-
-**Benefits:**
-- Clean script files without hardcoded expected values
-- Easy to update answers without touching code
-- Answers naturally gitignored alongside puzzle inputs
-- Explicit test case list shows what's being tested
-- Explicit part specification prevents confusion
-- Can override with explicit `TestCase("file", expected_value)` when needed
+- Expected values included directly in TestCase definitions
 
 ## Development Workflow
 
