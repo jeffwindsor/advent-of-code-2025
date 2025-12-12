@@ -47,9 +47,14 @@ __all__ = [
     "Parser",
     "extract_ints",
     "extract_pattern",
+    "pattern_to_bools",
+    "extract_bracketed",
+    "extract_parenthesized",
+    "extract_braced",
     # From math
     "count_continuous_segments",
     "count_digits",
+    "calculate_toggle_states",
     # From testing
     "TestCase",
     "run",
