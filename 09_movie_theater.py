@@ -99,7 +99,7 @@ def flood_fill_interior(
         if seed is None:
             return
 
-    flood_fill_mark(grid, seed, {"."}, "I")
+    flood_fill_mark(grid, seed, "I", {"."})
 
 
 def is_rectangle_valid(

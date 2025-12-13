@@ -39,14 +39,16 @@ def product_of_three_largest(sizes: list[int]) -> int:
 def build_connected_components(
     num_coords: int, distances: list[Edge], num_connections: int
 ) -> UnionFind:
-    uf = UnionFind(num_coords)
+    uf = UnionFind()
     for _, i, j in distances[:num_connections]:
         uf.union(i, j)
     return uf
 
 
 def find_final_connecting_edge(coords: list[Coord], distances: list[Edge]) -> CoordPair:
-    uf = UnionFind(len(coords))
+    uf = UnionFind()
+    for i in range(len(coords)):
+        uf.find(i)
     return next(
         CoordPair(coords[i], coords[j])
         for _, i, j in distances
@@ -58,7 +60,7 @@ def three_largest_circuits(data_file: str, num_connections: int) -> int:
     coords = parse(data_file)
     distances = compute_distances(coords)
     uf = build_connected_components(len(coords), distances, num_connections)
-    return product_of_three_largest(uf.get_component_sizes())
+    return product_of_three_largest(uf.get_component_sizes().values())
 
 
 def last_connection_product(data_file: str) -> int:

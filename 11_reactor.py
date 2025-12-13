@@ -35,16 +35,16 @@ def count_paths_visiting_dac_and_fft(args):
 
     # Multiplicative counting: svr → fft → dac → out
     paths_fft_then_dac = (
-        count_paths_dag("svr", "fft", neighbors)
-        * count_paths_dag("fft", "dac", neighbors)
-        * count_paths_dag("dac", "out", neighbors)
+        count_paths_dag("svr", neighbors, lambda node: node == "fft")
+        * count_paths_dag("fft", neighbors, lambda node: node == "dac")
+        * count_paths_dag("dac", neighbors, lambda node: node == "out")
     )
 
     # Multiplicative counting: svr → dac → fft → out
     paths_dac_then_fft = (
-        count_paths_dag("svr", "dac", neighbors)
-        * count_paths_dag("dac", "fft", neighbors)
-        * count_paths_dag("fft", "out", neighbors)
+        count_paths_dag("svr", neighbors, lambda node: node == "dac")
+        * count_paths_dag("dac", neighbors, lambda node: node == "fft")
+        * count_paths_dag("fft", neighbors, lambda node: node == "out")
     )
 
     return paths_fft_then_dac + paths_dac_then_fft
