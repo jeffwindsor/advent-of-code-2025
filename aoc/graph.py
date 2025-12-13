@@ -352,6 +352,78 @@ def dijkstra(
     return distances
 
 
+def count_paths_dag(
+    start: Any,
+    target: Any,
+    neighbors_func: Callable[[Any], list[Any]],
+) -> int:
+    """
+    Count all paths from start to target in a directed acyclic graph (DAG).
+
+    Uses memoization for efficient counting. Assumes the graph is acyclic.
+
+    Args:
+        start: Starting node
+        target: Target node
+        neighbors_func: Function that returns list of neighbor nodes
+
+    Returns:
+        Number of distinct paths from start to target
+
+    Example:
+        >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}
+        >>> count_paths_dag('A', 'D', lambda n: graph.get(n, []))
+        2
+    """
+    from functools import lru_cache
+
+    @lru_cache(maxsize=None)
+    def count(current):
+        if current == target:
+            return 1
+        return sum(count(neighbor) for neighbor in neighbors_func(current))
+
+    return count(start)
+
+
+def count_paths_cyclic(
+    start: Any,
+    target: Any,
+    neighbors_func: Callable[[Any], list[Any]],
+) -> int:
+    """
+    Count all paths from start to target in a graph that may contain cycles.
+
+    Uses backtracking to avoid revisiting nodes within the same path.
+
+    Args:
+        start: Starting node
+        target: Target node
+        neighbors_func: Function that returns list of neighbor nodes
+
+    Returns:
+        Number of distinct paths from start to target
+
+    Example:
+        >>> graph = {'A': ['B', 'C'], 'B': ['C'], 'C': ['A', 'D'], 'D': []}
+        >>> count_paths_cyclic('A', 'D', lambda n: graph.get(n, []))
+        2
+    """
+    def count(current, visited):
+        if current == target:
+            return 1
+        visited.add(current)
+        total = sum(
+            count(neighbor, visited)
+            for neighbor in neighbors_func(current)
+            if neighbor not in visited
+        )
+        visited.remove(current)
+        return total
+
+    return count(start, set())
+
+
 def find_max_clique(graph: dict[Any, set[Any]]) -> set[Any]:
     """
     Find the largest clique (fully-connected subgraph) using Bron-Kerbosch algorithm.
@@ -459,6 +531,8 @@ __all__ = [
     "flood_fill",
     "flood_fill_mark",
     "dijkstra",
+    "count_paths_dag",
+    "count_paths_cyclic",
     "find_max_clique",
     "UnionFind",
 ]
